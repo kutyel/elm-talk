@@ -1,96 +1,330 @@
-import {
-  CodeSurfer,
-  CodeSurferColumns,
-  Step,
-} from "code-surfer";
-import { github, vsDark } from "@code-surfer/themes";
+import { CodeSurfer, CodeSurferColumns, Step } from "code-surfer"
+import { nightOwl } from '@code-surfer/themes'
+import { optic, set } from 'optics.js'
+import "prismjs/components/prism-elm"
 
-export const theme = vsDark;
+export const theme = set(optic('styles', 'CodeSurfer', 'code', 'fontFamily'), 'Operator Mono Lig', nightOwl)
 
-# Hello 👋
+<Head>
+<title>Elm talk 🌳</title>
+</Head>
 
-You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](https://codesurfer.pomb.us)
+import cover from "./img/cover.jpeg"
+
+<Image src={cover} />
+
+---
+
+`$ whoami`
+
+---
+import me from "./img/me.png"
+
+<Image src={me} />
+
+---
+import fox from "./img/fox.png"
+
+### FP in JavaScript? Sure!
+
+<img src={fox} />
+
+---
+import elm from "./img/elm-logo.png"
+
+## What is Elm? 🌳
+
+<img width="300px" src={elm} />
+
+<Notes>
+  <li>Friendly error messages</li>
+  <li>Small subset of Haskell, simpler than JavaScript</li>
+  <li>Static Types, pure Functional programming</li>
+  <li>NO RUNTIME ERRORS!</li>
+  <li>Interop via ports/flags and web components</li>
+  <li>Great tooling and community</li>
+</Notes>
+
+---
+
+##  Elm is a pure functional programming language
+
+---
+
+<Steps>
+
+- <i>This means no uncontrolled side-effects</i>
+- Elm has eager evaluation (unlike Haskell which is <i>lazy</i>)
+- <strong>NO mutability 💃🏻</strong>
+- Algebraic Data Types and pattern matching! 👑
+- Static Types with AMAZING type inference (ML family), sorry TypeScript...
+- Resilient, maintainable, scalable, testable code
+
+</Steps>
+
+
+---
+
+## JavaScript vs. Elm Cheatsheet
+
+---
+import syntax1 from "./img/syntax1.png"
+
+<img width="1500px" src={syntax1} />
+
+---
+
+import syntax2 from "./img/syntax2.png"
+
+<img width="1500px" src={syntax2} />
+
+---
+
+import syntax3 from "./img/syntax3.png"
+
+<img width="1500px" src={syntax3} />
+
+---
+import cheat from "./img/elm-cheat.png"
+
+### Elm is small! 🤏🏼
+
+<img src={cheat} />
+
+---
+
+## ADTs!
 
 ---
 
 <CodeSurfer>
 
-```js title="This is a title" subtitle="and this a subtitle"
-function lorem(ipsum, dolor = 1) {
-  const sit = ipsum == null ? 0 : ipsum.sit;
-  dolor = sit - amet(dolor);
-  return sit
-    ? consectetur(ipsum, 0, dolor < 0 ? 0 : dolor)
-    : [];
-}
-
-function incididunt(ipsum, ut = 1) {
-  ut = labore.et(amet(ut), 0);
-  const sit = ipsum == null ? 0 : ipsum.sit;
-
-  if (!sit || ut < 1) {
-    return [];
-  }
-
-  let dolore = 0;
-  let magna = 0;
-  const aliqua = new eiusmod(labore.ut(sit / ut));
-
-  while (dolore < sit) {
-    aliqua[magna++] = consectetur(
-      ipsum,
-      dolore,
-      (dolore += ut)
-    );
-  }
-
-  return aliqua;
-}
+```elm title="SUM Types ➕"
+type Msg
+    = LogIn
+    | LogOut
+    | SelectYear Int
+    | SelectBook Book
+    | SelectDate String
+    | ResizedApp Int Int
+    | SelectChapter Chapters
+    | SetTime Posix
+    | Read Book Chapters User Posix
+    | Undo Book Chapters User Posix
+    | OnHover (List (CI.One Tile CI.Any))
+    | LoggedInData (Result Decode.Error User)
+    | LoggedInError (Result Decode.Error ErrorData)
+    | DeleteChapter
+    | ReadChapter (Result Firestore.Error (Firestore.Document Reading))
+    | FetchChapters (Result Firestore.Error (List (Firestore.Query Reading)))
 ```
 
-```js
-function lorem(ipsum, dolor = 1) {
-  const sit = ipsum == null ? 0 : ipsum.sit;
-  dolor = sit - amet(dolor);
-  return sit
-    ? consectetur(ipsum, 0, dolor < 0 ? 0 : dolor)
-    : [];
-}
-
-function adipiscing(...elit) {
-  if (!elit.sit) {
-    return [];
-  }
-
-  const sed = elit[0];
-  return eiusmod.tempor(sed) ? sed : [sed];
-}
-
-function incididunt(ipsum, ut = 1) {
-  ut = labore.et(amet(ut), 0);
-  const sit = ipsum == null ? 0 : ipsum.sit;
-
-  if (!sit || ut < 1) {
-    return [];
-  }
-
-  let dolore = 0;
-  let magna = 0;
-  const aliqua = new eiusmod(labore.ut(sit / ut));
-
-  while (dolore < sit) {
-    aliqua[magna++] = consectetur(
-      ipsum,
-      dolore,
-      (dolore += ut)
-    );
-  }
-
-  return aliqua;
-}
+```diff 13:14,16:17
 ```
 
-```diff 1[10:14],2[15:19],3[22:27],10:12
+
+</CodeSurfer>
+
+---
+<CodeSurfer>
+
+```elm title="PRODUCT Types ✖️"
+type alias Model =
+    { firestore : Firestore.Firestore
+    , readings : WebData (List (Firestore.Document Reading))
+    , selectedBook : Book
+    , selectedChapter : Chapters
+    , selectedDate : Maybe Posix
+    , user : WebData User
+    , device : Device
+    , displayYear : Int
+    , availableYears : List Int
+    , saved : Bool
+    , hovering : List (CI.One Tile CI.Any)
+    }
+```
+
+```diff 3,7
+```
+
+
+</CodeSurfer>
+
+---
+<CodeSurfer>
+
+```elm title="What is WebData? 🤔"
+type alias WebData a =
+    RemoteData Http.Error a
+
+
+type RemoteData e a
+    = NotAsked
+    | Loading
+    | Failure e
+    | Success a
+```
+
+```diff 5:9
+```
+
+
+</CodeSurfer>
+
+---
+
+### How are NO runtime exceptions even possible? 🤔
+
+---
+
+<CodeSurfer>
+
+```elm title="The Maybe type! 😎" subtitle="aka Option! 🙅🏻‍♂️"
+type Maybe a = Just a | Nothing
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```elm title="Pattern matching! 👑"
+FetchChapters (Ok readings) ->
+    case List.head readings of
+        Nothing ->
+            ( { model | readings = Success [] }, Cmd.none )
+
+        Just { document } ->
+            ( { model
+                | readings = Success <| List.map .document readings
+                , selectedBook = document.fields.book
+                , selectedChapter = document.fields.chapter
+              }
+            , Cmd.none
+            )
+```
+
+```diff 2,3,6
+```
+
+</CodeSurfer>
+
+---
+<CodeSurfer>
+
+```elm title="Moar pattern matching!" subtitle="Currying by default makes working with pipes amazing! 🍛"
+fetchChapters : Model -> ( Model, Cmd Msg )
+fetchChapters model =
+    ( { model | readings = Loading }
+    , case model.user of
+        Success { uid } ->
+            let
+                query : Query.Query
+                query =
+                    Query.new
+                        |> Query.collection "readings"
+                        |> Query.orderBy "date" Query.Descending
+                        |> Query.where_
+                            (Query.compositeFilter Query.And
+                                (Query.fieldFilter "date" Query.GreaterThanOrEqual (Query.timestamp <| firstDayOfYear model.displayYear))
+                                [ Query.fieldFilter "date" Query.LessThanOrEqual (Query.timestamp <| lastDayOfYear model.displayYear) ]
+                            )
+            in
+            model.firestore
+                |> Firestore.root
+                |> Firestore.collection "users"
+                |> Firestore.document uid
+                |> Firestore.build
+                |> Result.toTask
+                |> Task.andThen (Firestore.runQuery decoder query)
+                |> Task.attempt FetchChapters
+
+        _ ->
+            Cmd.none
+    )
+```
+
+```diff 17:25
+```
+
+
+</CodeSurfer>
+
+---
+
+## The Elm Architecture (TEA) 🍵
+
+---
+
+## Friendly Error Messages! 🤗
+
+--- 
+
+## Type inference!
+
+---
+
+## Nice Editor Integration!
+
+---
+
+## FFI (Foreign Function Interface)!
+
+---
+
+> Make impossible states _actually_ impossible!
+
+---
+
+<CodeSurfer>
+
+```elm title="Real World Example! 🌎" subtitle="Coding suddenly becomes modelling your DOMAIN with the proper data structure!!"
+type alias Model =
+    { xtoken : XToken
+    , today : Maybe Date
+    , pageModel : PageModel
+    }
+
+
+type PageModel
+    = Editor EditorModel
+    | Loading LoadingModel
+    | Successful SuccessfulModel
+    | Failure FailureModel
+    | NoDataYet
+```
+
+</CodeSurfer>
+
+---
+
+### Things have not always been perfect from the beginning...
+
+---
+
+<CodeSurfer>
+
+```elm title="Url Parsing..." subtitle="Recommended way of dealing with routes requires parser combinators..."
+import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string)
+
+type Route
+  = Topic String
+  | Blog Int
+  | User String
+  | Comment String Int
+
+routeParser : Parser (Route -> a) a
+routeParser =
+  oneOf
+    [ map Topic   (s "topic" </> string)
+    , map Blog    (s "blog" </> int)
+    , map User    (s "user" </> string)
+    , map Comment (s "user" </> string </> s "comment" </> int)
+    ]
+```
+
+```diff 9
 
 ```
 
@@ -98,55 +332,98 @@ function incididunt(ipsum, ut = 1) {
 
 ---
 
-<CodeSurferColumns themes={[vsDark, github]}>
+<CodeSurfer>
 
-<Step>
+```elm title="Enter elm-app-url!" subtitle="Much better API (IMHO, looks like ReasonML)"
+import AppUrl exposing (AppUrl)
 
-```js
-const magna = aliqua => aliqua.ut((enim, ad) => enim, 0);
+type Route
+  = Topic String
+  | Blog Int
+  | User String
+  | Comment String Int
+
+parse : AppUrl -> Maybe Route
+parse url =
+    case url.path of
+        [ "topic", topic ] ->
+            Just <| Topic topic
+
+        [ "blog", blogId ] ->
+            Maybe.map Blog <| String.toInt blogId
+
+        [ "user", user ] ->
+            Just <| User user
+
+        [ "blog", user, "comment", commentId ] ->
+            Maybe.map (Comment user) <| String.toInt commentId
+
+        _ ->
+            Nothing
 ```
 
-```js
-const minim = (ad, enim) => dolore.magna(ad / enim);
+```diff 9:25
+
 ```
 
-</Step>
-
-<Step>
-
-```js
-const lorem = (ipsum, dolor, sit) => {
-  const amet = dolor - ipsum;
-  return consectetur.adipiscing(
-    {
-      elit: sed.eiusmod(sit - dolor) / amet + 2,
-    },
-    (tempor, incididunt) => ipsum + amet * incididunt
-  );
-};
-
-const magna = aliqua => aliqua.ut((enim, ad) => enim, 0);
-```
-
-```js
-const minim = (ad, enim) => dolore.magna(ad / enim);
-
-const sed = (eiusmod, tempor, incididunt) => {
-  const ut = tempor - eiusmod;
-  return labore.et(
-    {
-      amet: dolore.magna(incididunt - tempor) / ut + 2,
-    },
-    (aliqua, elit) => eiusmod + ut * elit
-  );
-};
-```
-
-</Step>
-
-</CodeSurferColumns>
+</CodeSurfer>
 
 ---
 
-docs:  
-[codesurfer.pomb.us](https://codesurfer.pomb.us)
+### Downsides of Elm...
+
+---
+
+<Steps>
+  <li>Only Frontend</li>
+  <li>Not really FFI (Foreign Function Interface)</li>
+  <li>Small and niche... (not mainstream)</li>
+  <li>Weird syntax for beginners...</li>
+</Steps>
+
+---
+
+import roc from "./img/roc.png"
+
+### Check out Roc! 🕊️
+
+<img src={roc} />
+
+--- 
+
+## Honorable Mentions:
+
+---
+
+`elm-community/webgl`
+
+![elm-webgl](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*dSY9TyIITI2jd0sJTgwbUQ.gif)
+
+_"Type once, use forever!" -Cristiano Calcagno_
+
+---
+
+`ianmackenzie/elm-3d-scene`
+
+![elm-3d-scene](https://ianmackenzie.github.io/elm-3d-scene/images/1.0.0/hable-filmic-tone-mapping-bright.png)
+
+A game in Reason that compiles to **native** iOS and **native** Android! 😱
+
+---
+
+## Learn Elm! 🌳
+
+![elm](https://s3.us-west-2.amazonaws.com/social-images.manning.com/rfeldman/twitter.png)
+
+---
+
+## Questions? 🤔 (@FlavioCorpa)
+
+---
+
+# Thanks! 😸
+
+---
+import ending from "./img/ending.png"
+
+<Image src={ending} />

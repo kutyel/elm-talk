@@ -2,13 +2,14 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "mdx-deck deck.mdx",
-    "build": "mdx-deck build deck.mdx",
-    "test": "echo \"there are no tests\""
+    "start": "mdx-deck deck.mdx -p 1234",
+    "build": "mdx-deck build deck.mdx"
   },
   "devDependencies": {
     "code-surfer": "3.1.0",
-    "mdx-deck": "3.0.13"
+    "mdx-deck": "3.0.13",
+    "mdx-deck-footer": "^1.3.0",
+    "optics.js": "^2.4.0"
   },
   "name": "elm-talk"
 }
