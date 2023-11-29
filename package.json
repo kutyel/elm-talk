@@ -8,8 +8,8 @@
     "build": "mdx-deck build deck.mdx"
   },
   "devDependencies": {
-    "code-surfer": "3.1.0",
-    "mdx-deck": "3.0.13",
+    "code-surfer": "^3.1.1",
+    "mdx-deck": "^3.0.10",
     "optics.js": "^2.4.0"
   },
   "name": "elm-talk"
