@@ -1,4 +1,4 @@
-import { CodeSurfer, CodeSurferColumns, Step } from "code-surfer"
+import { CodeSurfer } from "code-surfer"
 import { nightOwl } from '@code-surfer/themes'
 import { optic, set } from 'optics.js'
 import "prismjs/components/prism-elm"
@@ -93,13 +93,232 @@ import cheat from "./img/elm-cheat.png"
 
 ---
 
-## ADTs!
+## The Elm Architecture (TEA) 🍵
 
 ---
 
 <CodeSurfer>
 
-```elm title="SUM Types ➕"
+```elm title="Remember Redux?"
+module Main exposing (Msg(..), main, update, view)
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox { init = 0, update = update, view = view }
+
+
+type Msg
+    = Increment
+    | Decrement
+    | Reset
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+        Reset ->
+            0
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ button [ onClick Increment ] [ text "+" ]
+        , div [] [ text (String.fromInt model) ]
+        , button [ onClick Reset ] [ text "Reset" ]
+        ]
+```
+
+```elm 7:10 title="Remember Redux?" subtitle="Main program function..."
+module Main exposing (Msg(..), main, update, view)
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox { init = 0, update = update, view = view }
+
+
+type Msg
+    = Increment
+    | Decrement
+    | Reset
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+        Reset ->
+            0
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ button [ onClick Increment ] [ text "+" ]
+        , div [] [ text (String.fromInt model) ]
+        , button [ onClick Reset ] [ text "Reset" ]
+        ]
+```
+
+```elm 13:16 title="Remember Redux?" subtitle="The Msg type!"
+module Main exposing (Msg(..), main, update, view)
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox { init = 0, update = update, view = view }
+
+
+type Msg
+    = Increment
+    | Decrement
+    | Reset
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+        Reset ->
+            0
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ button [ onClick Increment ] [ text "+" ]
+        , div [] [ text (String.fromInt model) ]
+        , button [ onClick Reset ] [ text "Reset" ]
+        ]
+```
+
+```elm 19:30 title="Remember Redux?" subtitle="The update function!"
+module Main exposing (Msg(..), main, update, view)
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox { init = 0, update = update, view = view }
+
+
+type Msg
+    = Increment
+    | Decrement
+    | Reset
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+        Reset ->
+            0
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ button [ onClick Increment ] [ text "+" ]
+        , div [] [ text (String.fromInt model) ]
+        , button [ onClick Reset ] [ text "Reset" ]
+        ]
+```
+
+```elm 32:39 title="Remember Redux?" subtitle="'view' is just a function from the state!"
+module Main exposing (Msg(..), main, update, view)
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox { init = 0, update = update, view = view }
+
+
+type Msg
+    = Increment
+    | Decrement
+    | Reset
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+        Reset ->
+            0
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ button [ onClick Increment ] [ text "+" ]
+        , div [] [ text (String.fromInt model) ]
+        , button [ onClick Reset ] [ text "Reset" ]
+        ]
+```
+
+</CodeSurfer>
+
+---
+
+## ADTs!
+
+<Notes>
+- Now let's see language features that JS does not have, but ALL FP langs do...
+</Notes>
+
+---
+
+<CodeSurfer>
+
+```elm title="SUM Types ➕" subtitle="Let's see some REAL code..."
 type Msg
     = LogIn
     | LogOut
@@ -119,9 +338,45 @@ type Msg
     | FetchChapters (Result Firestore.Error (List (Firestore.Query Reading)))
 ```
 
-```diff 13:14,16:17
+```elm 13:14 title="SUM Types ➕" subtitle="We can catch our own custom errors..."
+type Msg
+    = LogIn
+    | LogOut
+    | SelectYear Int
+    | SelectBook Book
+    | SelectDate String
+    | ResizedApp Int Int
+    | SelectChapter Chapters
+    | SetTime Posix
+    | Read Book Chapters User Posix
+    | Undo Book Chapters User Posix
+    | OnHover (List (CI.One Tile CI.Any))
+    | LoggedInData (Result Decode.Error User)
+    | LoggedInError (Result Decode.Error ErrorData)
+    | DeleteChapter
+    | ReadChapter (Result Firestore.Error (Firestore.Document Reading))
+    | FetchChapters (Result Firestore.Error (List (Firestore.Query Reading)))
 ```
 
+```elm 16:17 title="SUM Types ➕" subtitle="Or interface with external APIs, like Firebase in this case (type safe!)"
+type Msg
+    = LogIn
+    | LogOut
+    | SelectYear Int
+    | SelectBook Book
+    | SelectDate String
+    | ResizedApp Int Int
+    | SelectChapter Chapters
+    | SetTime Posix
+    | Read Book Chapters User Posix
+    | Undo Book Chapters User Posix
+    | OnHover (List (CI.One Tile CI.Any))
+    | LoggedInData (Result Decode.Error User)
+    | LoggedInError (Result Decode.Error ErrorData)
+    | DeleteChapter
+    | ReadChapter (Result Firestore.Error (Firestore.Document Reading))
+    | FetchChapters (Result Firestore.Error (List (Firestore.Query Reading)))
+```
 
 </CodeSurfer>
 
@@ -144,7 +399,7 @@ type alias Model =
     }
 ```
 
-```diff 3,7
+```diff 3,7 subtitle="Notice this suspicious WebData type..."
 ```
 
 
@@ -165,7 +420,29 @@ type RemoteData e a
     | Success a
 ```
 
-```diff 5:9
+```elm 1,2 title="What is WebData? 🤔" subtitle="Wrapper around a generic type that can error"
+type alias WebData a =
+    RemoteData Http.Error a
+
+
+type RemoteData e a
+    = NotAsked
+    | Loading
+    | Failure e
+    | Success a
+```
+
+
+```elm 5:9 title="What is WebData? 🤔" subtitle="RemoteData is just a sum type!"
+type alias WebData a =
+    RemoteData Http.Error a
+
+
+type RemoteData e a
+    = NotAsked
+    | Loading
+    | Failure e
+    | Success a
 ```
 
 
@@ -213,7 +490,7 @@ FetchChapters (Ok readings) ->
 ---
 <CodeSurfer>
 
-```elm title="Moar pattern matching!" subtitle="Currying by default makes working with pipes amazing! 🍛"
+```elm title="Moar pattern matching!"
 fetchChapters : Model -> ( Model, Cmd Msg )
 fetchChapters model =
     ( { model | readings = Loading }
@@ -245,7 +522,100 @@ fetchChapters model =
     )
 ```
 
-```diff 17:25
+```elm 4,5,27,28 title="Moar pattern matching!" subtitle="This is where we pattern match..."
+fetchChapters : Model -> ( Model, Cmd Msg )
+fetchChapters model =
+    ( { model | readings = Loading }
+    , case model.user of
+        Success { uid } ->
+            let
+                query : Query.Query
+                query =
+                    Query.new
+                        |> Query.collection "readings"
+                        |> Query.orderBy "date" Query.Descending
+                        |> Query.where_
+                            (Query.compositeFilter Query.And
+                                (Query.fieldFilter "date" Query.GreaterThanOrEqual (Query.timestamp <| firstDayOfYear model.displayYear))
+                                [ Query.fieldFilter "date" Query.LessThanOrEqual (Query.timestamp <| lastDayOfYear model.displayYear) ]
+                            )
+            in
+            model.firestore
+                |> Firestore.root
+                |> Firestore.collection "users"
+                |> Firestore.document uid
+                |> Firestore.build
+                |> Result.toTask
+                |> Task.andThen (Firestore.runQuery decoder query)
+                |> Task.attempt FetchChapters
+
+        _ ->
+            Cmd.none
+    )
+```
+
+```elm 7:16 title="Moar pattern matching!" subtitle="Building type safe queries becomes a breeze! 🌬️"
+fetchChapters : Model -> ( Model, Cmd Msg )
+fetchChapters model =
+    ( { model | readings = Loading }
+    , case model.user of
+        Success { uid } ->
+            let
+                query : Query.Query
+                query =
+                    Query.new
+                        |> Query.collection "readings"
+                        |> Query.orderBy "date" Query.Descending
+                        |> Query.where_
+                            (Query.compositeFilter Query.And
+                                (Query.fieldFilter "date" Query.GreaterThanOrEqual (Query.timestamp <| firstDayOfYear model.displayYear))
+                                [ Query.fieldFilter "date" Query.LessThanOrEqual (Query.timestamp <| lastDayOfYear model.displayYear) ]
+                            )
+            in
+            model.firestore
+                |> Firestore.root
+                |> Firestore.collection "users"
+                |> Firestore.document uid
+                |> Firestore.build
+                |> Result.toTask
+                |> Task.andThen (Firestore.runQuery decoder query)
+                |> Task.attempt FetchChapters
+
+        _ ->
+            Cmd.none
+    )
+```
+
+```elm 17:25 title="Moar pattern matching!" subtitle="Currying by default makes working with pipes amazing! 🍛"
+fetchChapters : Model -> ( Model, Cmd Msg )
+fetchChapters model =
+    ( { model | readings = Loading }
+    , case model.user of
+        Success { uid } ->
+            let
+                query : Query.Query
+                query =
+                    Query.new
+                        |> Query.collection "readings"
+                        |> Query.orderBy "date" Query.Descending
+                        |> Query.where_
+                            (Query.compositeFilter Query.And
+                                (Query.fieldFilter "date" Query.GreaterThanOrEqual (Query.timestamp <| firstDayOfYear model.displayYear))
+                                [ Query.fieldFilter "date" Query.LessThanOrEqual (Query.timestamp <| lastDayOfYear model.displayYear) ]
+                            )
+            in
+            model.firestore
+                |> Firestore.root
+                |> Firestore.collection "users"
+                |> Firestore.document uid
+                |> Firestore.build
+                |> Result.toTask
+                |> Task.andThen (Firestore.runQuery decoder query)
+                |> Task.attempt FetchChapters
+
+        _ ->
+            Cmd.none
+    )
 ```
 
 
@@ -253,23 +623,375 @@ fetchChapters model =
 
 ---
 
-## The Elm Architecture (TEA) 🍵
+### Elm is almost _just a subset_ of Haskell! 🤯
 
 ---
 
-## Friendly Error Messages! 🤗
+> Why is this relevant??
+
+---
+
+import error1 from "./img/error1.webp"
+
+### Friendly Compiler Error Messages! 🤗
+<img src={error1} />
+
+---
+import error2 from "./img/error2.png"
+
+## Compiler Error Message: Type Mismatch 💔
+
+<img width="1000px" src={error2} />
+
+---
+import error3 from "./img/error3.png"
+
+## Compiler Error: Typo Checking! 🐛
+
+<img width="800px" src={error3} />
+
+---
+import error4 from "./img/error4.png"
+
+## Compiler Error: Missing Patterns! 🪩
+
+<img width="1000px" src={error4} />
 
 --- 
+import editor from "./img/editor.png"
 
-## Type inference!
+### Nice Editor Integration!
+
+<img width="1000px" src={editor} />
+
+---
+import inference from "./img/inference.png"
+
+## Type inference (ML Family)!
+
+<img width="1500px" src={inference} />
 
 ---
 
-## Nice Editor Integration!
+## FFI (Foreign Function Interface)
 
 ---
 
-## FFI (Foreign Function Interface)!
+<CodeSurfer>
+
+```js title="FFI via Ports and Flags" subtitle="Requires wiring up some JS/TS..."
+// Start the Elm application.
+const app = Elm.Main.init({
+  node: document.getElementById('myapp')
+})
+
+// Create your WebSocket.
+const socket = new WebSocket('wss://echo.websocket.org');
+
+// When a command goes to the `sendMessage` port, we pass the message
+// along to the WebSocket.
+app.ports.sendMessage.subscribe((message) => {
+  socket.send(message);
+})
+
+// When a message comes into our WebSocket, we pass the message along
+// to the `messageReceiver` port.
+socket.addEventListener("message", (event) => {
+  app.ports.messageReceiver.send(event.data);
+})
+```
+
+</CodeSurfer>
+
+---
+
+
+<CodeSurfer>
+
+```elm title="Elm side of things..."
+port module Main exposing (..)
+
+
+-- PORTS
+
+
+port sendMessage : String -> Cmd msg
+port messageReceiver : (String -> msg) -> Sub msg
+
+
+-- UPDATE
+
+
+type Msg
+  = DraftChanged String
+  | Send
+  | Recv String
+
+
+-- Use the `sendMessage` port when someone presses ENTER or clicks
+-- the "Send" button. Check out index.html to see the corresponding
+-- JS where this is piped into a WebSocket.
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  case msg of
+    DraftChanged draft ->
+      ( { model | draft = draft }
+      , Cmd.none
+      )
+
+    Send ->
+      ( { model | draft = "" }
+      , sendMessage model.draft
+      )
+
+    Recv message ->
+      ( { model | messages = model.messages ++ [message] }
+      , Cmd.none
+      )
+
+
+
+-- SUBSCRIPTIONS
+
+
+-- Subscribe to the `messageReceiver` port to hear about messages coming in
+-- from JS. Check out the index.html file to see how this is hooked up to a
+-- WebSocket.
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  messageReceiver Recv
+```
+
+```elm 1 title="Elm side of things..." subtitle="We need to declare our Elm module as 'port'"
+port module Main exposing (..)
+
+
+-- PORTS
+
+
+port sendMessage : String -> Cmd msg
+port messageReceiver : (String -> msg) -> Sub msg
+
+
+-- UPDATE
+
+
+type Msg
+  = DraftChanged String
+  | Send
+  | Recv String
+
+
+-- Use the `sendMessage` port when someone presses ENTER or clicks
+-- the "Send" button. Check out index.html to see the corresponding
+-- JS where this is piped into a WebSocket.
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  case msg of
+    DraftChanged draft ->
+      ( { model | draft = draft }
+      , Cmd.none
+      )
+
+    Send ->
+      ( { model | draft = "" }
+      , sendMessage model.draft
+      )
+
+    Recv message ->
+      ( { model | messages = model.messages ++ [message] }
+      , Cmd.none
+      )
+
+
+
+-- SUBSCRIPTIONS
+
+
+-- Subscribe to the `messageReceiver` port to hear about messages coming in
+-- from JS. Check out the index.html file to see how this is hooked up to a
+-- WebSocket.
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  messageReceiver Recv
+```
+
+```elm 7,8 title="Elm side of things..." subtitle="Declare the exposed functions to the outside world..."
+port module Main exposing (..)
+
+
+-- PORTS
+
+
+port sendMessage : String -> Cmd msg
+port messageReceiver : (String -> msg) -> Sub msg
+
+
+-- UPDATE
+
+
+type Msg
+  = DraftChanged String
+  | Send
+  | Recv String
+
+
+-- Use the `sendMessage` port when someone presses ENTER or clicks
+-- the "Send" button. Check out index.html to see the corresponding
+-- JS where this is piped into a WebSocket.
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  case msg of
+    DraftChanged draft ->
+      ( { model | draft = draft }
+      , Cmd.none
+      )
+
+    Send ->
+      ( { model | draft = "" }
+      , sendMessage model.draft
+      )
+
+    Recv message ->
+      ( { model | messages = model.messages ++ [message] }
+      , Cmd.none
+      )
+
+
+
+-- SUBSCRIPTIONS
+
+
+-- Subscribe to the `messageReceiver` port to hear about messages coming in
+-- from JS. Check out the index.html file to see how this is hooked up to a
+-- WebSocket.
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  messageReceiver Recv
+```
+
+```elm 20:22,33 title="Elm side of things..." subtitle="send events from Elm to the outside..."
+port module Main exposing (..)
+
+
+-- PORTS
+
+
+port sendMessage : String -> Cmd msg
+port messageReceiver : (String -> msg) -> Sub msg
+
+
+-- UPDATE
+
+
+type Msg
+  = DraftChanged String
+  | Send
+  | Recv String
+
+
+-- Use the `sendMessage` port when someone presses ENTER or clicks
+-- the "Send" button. Check out index.html to see the corresponding
+-- JS where this is piped into a WebSocket.
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  case msg of
+    DraftChanged draft ->
+      ( { model | draft = draft }
+      , Cmd.none
+      )
+
+    Send ->
+      ( { model | draft = "" }
+      , sendMessage model.draft
+      )
+
+    Recv message ->
+      ( { model | messages = model.messages ++ [message] }
+      , Cmd.none
+      )
+
+
+
+-- SUBSCRIPTIONS
+
+
+-- Subscribe to the `messageReceiver` port to hear about messages coming in
+-- from JS. Check out the index.html file to see how this is hooked up to a
+-- WebSocket.
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  messageReceiver Recv
+```
+
+```elm 46:51 title="Elm side of things..." subtitle="Or receive messages from the WebSocket via subscriptions!"
+port module Main exposing (..)
+
+
+-- PORTS
+
+
+port sendMessage : String -> Cmd msg
+port messageReceiver : (String -> msg) -> Sub msg
+
+
+-- UPDATE
+
+
+type Msg
+  = DraftChanged String
+  | Send
+  | Recv String
+
+
+-- Use the `sendMessage` port when someone presses ENTER or clicks
+-- the "Send" button. Check out index.html to see the corresponding
+-- JS where this is piped into a WebSocket.
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  case msg of
+    DraftChanged draft ->
+      ( { model | draft = draft }
+      , Cmd.none
+      )
+
+    Send ->
+      ( { model | draft = "" }
+      , sendMessage model.draft
+      )
+
+    Recv message ->
+      ( { model | messages = model.messages ++ [message] }
+      , Cmd.none
+      )
+
+
+
+-- SUBSCRIPTIONS
+
+
+-- Subscribe to the `messageReceiver` port to hear about messages coming in
+-- from JS. Check out the index.html file to see how this is hooked up to a
+-- WebSocket.
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  messageReceiver Recv
+```
+
+</CodeSurfer>
+
+---
+
+## Web Components!
+
+<img src="https://i.ytimg.com/vi/memIRXFSNkU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9XQo6GPaP4mXaYPZSgBlLlBhUZw" />
+
+> "When and how to use web components with Elm" (Luke Westby)
+
+---
+import gwi from "./img/gwi.webp"
+
+<img src={gwi} />
 
 ---
 
@@ -324,8 +1046,23 @@ routeParser =
     ]
 ```
 
-```diff 9
+```elm 9 title="Url Parsing..." subtitle="Look at that weird type signature... 🤷🏼‍♂️"
+import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string)
 
+type Route
+  = Topic String
+  | Blog Int
+  | User String
+  | Comment String Int
+
+routeParser : Parser (Route -> a) a
+routeParser =
+  oneOf
+    [ map Topic   (s "topic" </> string)
+    , map Blog    (s "blog" </> int)
+    , map User    (s "user" </> string)
+    , map Comment (s "user" </> string </> s "comment" </> int)
+    ]
 ```
 
 </CodeSurfer>
@@ -375,10 +1112,12 @@ parse url =
 ---
 
 <Steps>
-  <li>Only Frontend</li>
-  <li>Not really FFI (Foreign Function Interface)</li>
-  <li>Small and niche... (not mainstream)</li>
-  <li>Weird syntax for beginners...</li>
+
+- Only Frontend (for now... 👀)
+- Not real FFI (Foreign Function Interface)
+- Small and niche... (not mainstream)
+- Weird syntax for beginners...
+
 </Steps>
 
 ---
