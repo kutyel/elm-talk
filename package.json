@@ -1,6 +1,8 @@
 {
   "private": true,
   "version": "1.0.0",
+  "author": "Flavio Corpa <flaviocorpa@gmail.com>",
+  "license":"MIT",
   "scripts": {
     "start": "mdx-deck deck.mdx -p 1234",
     "build": "mdx-deck build deck.mdx"

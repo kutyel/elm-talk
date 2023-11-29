@@ -1,4 +1,6 @@
-# MDX Deck + Code Surfer template
+# Elm talk 🌳
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ad726351-d2ba-4cef-b777-6a5d2f6146d9/deploy-status)](https://app.netlify.com/sites/elm-talk/deploys)
 
 This project was generated with the `npm init code-surfer-deck` command.
 
